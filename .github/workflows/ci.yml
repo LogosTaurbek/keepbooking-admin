@@ -1,0 +1,31 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # 20.19+ - some devDependencies (e.g. the latest eslint-visitor-keys) require it; the local
+      # dev machine this was scaffolded on is stuck on 18.19, but CI doesn't need to be.
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      # tsc -b && vite build - typecheck and production build in one step.
+      - name: Build
+        run: npm run build
