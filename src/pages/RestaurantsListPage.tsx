@@ -52,16 +52,19 @@ export function RestaurantsListPage() {
       ) : (
         <ul className="divide-y divide-gray-200 rounded-lg border border-gray-200 bg-white">
           {restaurants.map((r) => (
-            <li key={r.id}>
-              <Link to={`/restaurants/${r.id}/edit`} className="flex items-center justify-between px-4 py-3 hover:bg-gray-50">
-                <div>
-                  <p className="text-sm font-medium text-gray-900">{r.name}</p>
-                  <p className="text-xs text-gray-500">{r.address || 'No address set'}</p>
-                </div>
+            <li key={r.id} className="flex items-center justify-between px-4 py-3 hover:bg-gray-50">
+              <Link to={`/restaurants/${r.id}/edit`} className="flex-1">
+                <p className="text-sm font-medium text-gray-900">{r.name}</p>
+                <p className="text-xs text-gray-500">{r.address || 'No address set'}</p>
+              </Link>
+              <div className="flex items-center gap-3">
                 <span className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${STATUS_STYLES[r.status]}`}>
                   {r.status}
                 </span>
-              </Link>
+                <Link to={`/restaurants/${r.id}/bookings`} className="text-sm text-blue-600 hover:underline">
+                  Bookings
+                </Link>
+              </div>
             </li>
           ))}
         </ul>

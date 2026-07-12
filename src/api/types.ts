@@ -60,6 +60,39 @@ export interface CreateRestaurantRequest {
 
 export type UpdateRestaurantRequest = Partial<Omit<CreateRestaurantRequest, 'companyId'>>
 
+export type BookingStatus = 'PENDING' | 'CONFIRMED' | 'REJECTED' | 'CANCELLED' | 'COMPLETED' | 'NO_SHOW'
+
+export interface BookingDto {
+  id: number
+  restaurantId: number
+  restaurantName: string
+  tableId: number
+  tableNumber: string
+  userId: number
+  bookingDate: string
+  timeFrom: string
+  timeTo: string
+  guestCount: number
+  comment: string | null
+  status: BookingStatus
+  source: string
+  cancelReason: string | null
+  createdAt: string
+}
+
+export interface PageResponse<T> {
+  content: T[]
+  page: number
+  size: number
+  totalElements: number
+  totalPages: number
+}
+
+export interface UpdateBookingStatusRequest {
+  status: BookingStatus
+  cancelReason?: string
+}
+
 // RFC 7807 Problem Details (see backend's ProblemDetail/GlobalExceptionHandler).
 export interface ProblemDetail {
   type: string
