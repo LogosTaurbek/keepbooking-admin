@@ -4,6 +4,15 @@
 
 ## [Unreleased] — 2026-07-13
 
+### Added — Залы и столики ресторана
+- `RestaurantHallsPage` (`/restaurants/:id/halls`) — список залов ресторана, каждый рендерится через `HallCard` со своей вложенной таблицей столиков; без drag&drop-редактора позиций на этом шаге (осознанно отложено — бэкенд уже поддерживает `posX/posY` и `PUT /api/v1/tables/batch`, но это отдельная задача)
+- CRUD залов: создание (инлайн-форма над списком), редактирование и удаление прямо в карточке зала (`api/halls.ts`, зеркалит `HallDto`/`CreateHallRequest`/`UpdateHallRequest` бэкенда)
+- CRUD столиков внутри каждого зала: создание, редактирование, удаление инлайн в таблице (`api/tables.ts`, зеркалит `TableDto`/`CreateTableRequest`/`UpdateTableRequest`, включая `TableType`/`TableStatus`); форма столика покрывает number/capacity/minCapacity/type/isVip/nearWindow — остальные булевы флаги (`isSofa`, `hasSocket`, `isSmoking`) в DTO есть, но в UI пока не выведены, чтобы не раздувать форму на первом срезе
+- Ссылка «Halls» на каждой строке в списке ресторанов, рядом с «Bookings»
+- Бэкенд-гэпов на этот раз не нашлось — `HallController`/`TableController` уже имели полный CRUD, в отличие от предыдущих раундов (Update ресторана, IDOR в бронях)
+- Проверено вживую через headless Chrome (Playwright, временно установлен и удалён по обычной схеме) на реальном бэкенде: логин → онбординг компании → создание ресторана → переход на страницу залов → создание зала → редактирование названия → добавление столика → редактирование вместимости → удаление столика → удаление зала — весь цикл отработал корректно
+- По пути обнаружено (не баг, а особенность конфигурации): бэкенд по умолчанию разрешает CORS только для `localhost:3000/4200/8081` (`CORS_ORIGINS` в `application.yml`), а не для стандартного порта Vite `5173` — при живой проверке пришлось поднимать бэкенд с `CORS_ORIGINS` including `5173`. Не менялось в коде, т.к. это конфигурация конкретного дев-окружения, а не баг
+
 ### Added — CI (GitHub Actions)
 - `.github/workflows/ci.yml`: Node 20, `npm ci` → `npm run lint` → `npm run build` (`tsc -b && vite build`, тайпчек и сборка одной командой)
 - По пути прогнал `lint` сам и нашёл 1 warning (`react-refresh/only-export-components` — `AuthContext.tsx` экспортировал вперемешку компонент, hook и context). Не заглушил, а разнёс по файлам как положено: `context.ts` (`createContext`), `AuthContext.tsx` (только `AuthProvider`), `useAuth.ts` (хук) — lint теперь чистый, 0 warnings

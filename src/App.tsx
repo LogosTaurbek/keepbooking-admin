@@ -5,6 +5,7 @@ import { Layout } from './components/Layout'
 import { LoginPage } from './pages/LoginPage'
 import { RestaurantBookingsPage } from './pages/RestaurantBookingsPage'
 import { RestaurantFormPage } from './pages/RestaurantFormPage'
+import { RestaurantHallsPage } from './pages/RestaurantHallsPage'
 import { RestaurantsListPage } from './pages/RestaurantsListPage'
 
 export default function App() {
@@ -19,6 +20,7 @@ export default function App() {
             <Route path="/restaurants/new" element={<RestaurantFormPage />} />
             <Route path="/restaurants/:id/edit" element={<RestaurantFormPage />} />
             <Route path="/restaurants/:id/bookings" element={<RestaurantBookingsPage />} />
+            <Route path="/restaurants/:id/halls" element={<RestaurantHallsPage />} />
           </Route>
         </Route>
 

@@ -93,6 +93,64 @@ export interface UpdateBookingStatusRequest {
   cancelReason?: string
 }
 
+export interface HallDto {
+  id: number
+  restaurantId: number
+  name: string
+  floor: number | null
+  canvasWidth: number | null
+  canvasHeight: number | null
+}
+
+export interface CreateHallRequest {
+  restaurantId: number
+  name: string
+  floor?: number
+  canvasWidth?: number
+  canvasHeight?: number
+}
+
+export type UpdateHallRequest = Partial<Omit<CreateHallRequest, 'restaurantId'>>
+
+export type TableType = 'REGULAR' | 'SOFA' | 'VIP' | 'BAR' | 'TERRACE'
+export type TableStatus = 'ACTIVE' | 'INACTIVE' | 'MAINTENANCE'
+
+export interface TableDto {
+  id: number
+  hallId: number
+  number: string
+  capacity: number
+  minCapacity: number | null
+  shape: string
+  type: TableType
+  posX: number
+  posY: number
+  width: number
+  height: number
+  rotation: number
+  isVip: boolean
+  isSofa: boolean
+  nearWindow: boolean
+  hasSocket: boolean
+  isSmoking: boolean
+  status: TableStatus
+}
+
+export interface CreateTableRequest {
+  hallId: number
+  number: string
+  capacity: number
+  minCapacity?: number
+  type?: TableType
+  isVip?: boolean
+  isSofa?: boolean
+  nearWindow?: boolean
+  hasSocket?: boolean
+  isSmoking?: boolean
+}
+
+export type UpdateTableRequest = Partial<Omit<CreateTableRequest, 'hallId'>> & { status?: TableStatus }
+
 // RFC 7807 Problem Details (see backend's ProblemDetail/GlobalExceptionHandler).
 export interface ProblemDetail {
   type: string
