@@ -73,6 +73,9 @@ export function RestaurantsListPage() {
                 <Link to={`/restaurants/${r.id}/bookings`} className="text-sm text-blue-600 hover:underline">
                   Bookings
                 </Link>
+                <Link to={`/restaurants/${r.id}/analytics`} className="text-sm text-blue-600 hover:underline">
+                  Analytics
+                </Link>
               </div>
             </li>
           ))}

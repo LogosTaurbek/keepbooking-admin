@@ -3,6 +3,7 @@ import { AuthProvider } from './auth/AuthContext'
 import { ProtectedRoute } from './auth/ProtectedRoute'
 import { Layout } from './components/Layout'
 import { LoginPage } from './pages/LoginPage'
+import { RestaurantAnalyticsPage } from './pages/RestaurantAnalyticsPage'
 import { RestaurantBookingsPage } from './pages/RestaurantBookingsPage'
 import { RestaurantFormPage } from './pages/RestaurantFormPage'
 import { RestaurantHallsPage } from './pages/RestaurantHallsPage'
@@ -25,6 +26,7 @@ export default function App() {
             <Route path="/restaurants/:id/halls" element={<RestaurantHallsPage />} />
             <Route path="/restaurants/:id/menu" element={<RestaurantMenuPage />} />
             <Route path="/restaurants/:id/hours" element={<RestaurantWorkingHoursPage />} />
+            <Route path="/restaurants/:id/analytics" element={<RestaurantAnalyticsPage />} />
           </Route>
         </Route>
 

@@ -208,6 +208,35 @@ export interface UpsertWorkingHoursOverrideRequest {
   isClosed?: boolean
 }
 
+export interface HourCountDto {
+  hour: number
+  count: number
+}
+
+export interface TableCountDto {
+  tableId: number
+  tableNumber: string
+  count: number
+}
+
+// Range-summed totals only - no daily time series and no revenue data on the backend yet.
+export interface RestaurantAnalyticsDto {
+  restaurantId: number
+  from: string
+  to: string
+  totalBookings: number
+  pendingBookings: number
+  confirmedBookings: number
+  rejectedBookings: number
+  cancelledBookings: number
+  completedBookings: number
+  noShowBookings: number
+  confirmationRate: number
+  uniqueGuests: number
+  popularHours: HourCountDto[]
+  popularTables: TableCountDto[]
+}
+
 // RFC 7807 Problem Details (see backend's ProblemDetail/GlobalExceptionHandler).
 export interface ProblemDetail {
   type: string
