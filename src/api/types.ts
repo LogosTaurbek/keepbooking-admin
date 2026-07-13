@@ -175,6 +175,39 @@ export interface CreateMenuItemRequest {
 
 export type UpdateMenuItemRequest = Partial<Omit<CreateMenuItemRequest, 'restaurantId'>> & { isAvailable?: boolean }
 
+// dayOfWeek: 1=Monday .. 7=Sunday (java.time.DayOfWeek convention, no string enum on the backend).
+export interface WorkingHoursDto {
+  id: number
+  restaurantId: number
+  dayOfWeek: number
+  openTime: string | null
+  closeTime: string | null
+  isDayOff: boolean
+}
+
+export interface WorkingHoursItemRequest {
+  dayOfWeek: number
+  openTime?: string | null
+  closeTime?: string | null
+  isDayOff?: boolean
+}
+
+export interface WorkingHoursOverrideDto {
+  id: number
+  restaurantId: number
+  date: string
+  openTime: string | null
+  closeTime: string | null
+  isClosed: boolean
+}
+
+export interface UpsertWorkingHoursOverrideRequest {
+  date: string
+  openTime?: string | null
+  closeTime?: string | null
+  isClosed?: boolean
+}
+
 // RFC 7807 Problem Details (see backend's ProblemDetail/GlobalExceptionHandler).
 export interface ProblemDetail {
   type: string

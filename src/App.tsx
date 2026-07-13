@@ -8,6 +8,7 @@ import { RestaurantFormPage } from './pages/RestaurantFormPage'
 import { RestaurantHallsPage } from './pages/RestaurantHallsPage'
 import { RestaurantMenuPage } from './pages/RestaurantMenuPage'
 import { RestaurantsListPage } from './pages/RestaurantsListPage'
+import { RestaurantWorkingHoursPage } from './pages/RestaurantWorkingHoursPage'
 
 export default function App() {
   return (
@@ -23,6 +24,7 @@ export default function App() {
             <Route path="/restaurants/:id/bookings" element={<RestaurantBookingsPage />} />
             <Route path="/restaurants/:id/halls" element={<RestaurantHallsPage />} />
             <Route path="/restaurants/:id/menu" element={<RestaurantMenuPage />} />
+            <Route path="/restaurants/:id/hours" element={<RestaurantWorkingHoursPage />} />
           </Route>
         </Route>
 
