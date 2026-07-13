@@ -76,6 +76,9 @@ export function RestaurantsListPage() {
                 <Link to={`/restaurants/${r.id}/analytics`} className="text-sm text-blue-600 hover:underline">
                   Analytics
                 </Link>
+                <Link to={`/restaurants/${r.id}/reviews`} className="text-sm text-blue-600 hover:underline">
+                  Reviews
+                </Link>
               </div>
             </li>
           ))}

@@ -236,6 +236,23 @@ export interface RestaurantAnalyticsDto {
   popularTables: TableCountDto[]
 }
 
+export interface ReviewDto {
+  id: number
+  restaurantId: number
+  userId: number
+  userName: string
+  bookingId: number
+  rating: number
+  comment: string | null
+  createdAt: string
+  ownerReply: string | null
+  ownerReplyAt: string | null
+}
+
+export interface ReplyToReviewRequest {
+  reply: string
+}
+
 // RFC 7807 Problem Details (see backend's ProblemDetail/GlobalExceptionHandler).
 export interface ProblemDetail {
   type: string
