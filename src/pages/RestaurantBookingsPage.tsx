@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState, type FormEvent } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import * as bookingsApi from '../api/bookings'
 import { ApiError } from '../api/client'
@@ -39,15 +39,31 @@ export function RestaurantBookingsPage() {
   const [bookings, setBookings] = useState<BookingDto[] | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [actioningId, setActioningId] = useState<number | null>(null)
+  const [from, setFrom] = useState('')
+  const [to, setTo] = useState('')
 
-  function load() {
-    bookingsApi
-      .getRestaurantBookings(restaurantId)
-      .then((res) => setBookings(res.content))
-      .catch((err) => setError(err instanceof ApiError ? (err.problem?.detail ?? 'Failed to load') : 'Failed to load'))
+  const load = useCallback(
+    (fromDate?: string, toDate?: string) => {
+      bookingsApi
+        .getRestaurantBookings(restaurantId, { from: fromDate, to: toDate })
+        .then((res) => setBookings(res.content))
+        .catch((err) => setError(err instanceof ApiError ? (err.problem?.detail ?? 'Failed to load') : 'Failed to load'))
+    },
+    [restaurantId],
+  )
+
+  useEffect(() => load(), [load])
+
+  function handleFilterSubmit(e: FormEvent) {
+    e.preventDefault()
+    load(from || undefined, to || undefined)
   }
 
-  useEffect(load, [restaurantId])
+  function handleClearFilter() {
+    setFrom('')
+    setTo('')
+    load()
+  }
 
   async function handleTransition(booking: BookingDto, status: BookingStatus) {
     setError(null)
@@ -70,12 +86,48 @@ export function RestaurantBookingsPage() {
       </Link>
       <h1 className="mb-6 text-xl font-semibold text-gray-900">Bookings</h1>
 
+      <form onSubmit={handleFilterSubmit} className="mb-4 flex items-end gap-2">
+        <div>
+          <label className="mb-1 block text-xs font-medium text-gray-700">From</label>
+          <input
+            type="date"
+            value={from}
+            onChange={(e) => setFrom(e.target.value)}
+            className="rounded-md border border-gray-300 px-2 py-1 text-sm focus:border-blue-500 focus:outline-none"
+          />
+        </div>
+        <div>
+          <label className="mb-1 block text-xs font-medium text-gray-700">To</label>
+          <input
+            type="date"
+            value={to}
+            onChange={(e) => setTo(e.target.value)}
+            className="rounded-md border border-gray-300 px-2 py-1 text-sm focus:border-blue-500 focus:outline-none"
+          />
+        </div>
+        <button
+          type="submit"
+          className="rounded-md bg-gray-900 px-3 py-2 text-sm font-medium text-white hover:bg-gray-800"
+        >
+          Apply
+        </button>
+        {(from || to) && (
+          <button
+            type="button"
+            onClick={handleClearFilter}
+            className="rounded-md px-3 py-2 text-sm text-gray-600 hover:bg-gray-100"
+          >
+            Clear
+          </button>
+        )}
+      </form>
+
       {error && <div className="mb-4 rounded-md bg-red-50 px-3 py-2 text-sm text-red-700">{error}</div>}
 
       {bookings === null ? (
         <p className="text-sm text-gray-500">Loading…</p>
       ) : bookings.length === 0 ? (
-        <p className="text-sm text-gray-500">No bookings yet.</p>
+        <p className="text-sm text-gray-500">No bookings in this range.</p>
       ) : (
         <div className="overflow-x-auto rounded-lg border border-gray-200 bg-white">
           <table className="min-w-full divide-y divide-gray-200 text-sm">
