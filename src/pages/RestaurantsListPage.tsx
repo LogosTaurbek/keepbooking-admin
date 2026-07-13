@@ -61,6 +61,9 @@ export function RestaurantsListPage() {
                 <span className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${STATUS_STYLES[r.status]}`}>
                   {r.status}
                 </span>
+                <Link to={`/restaurants/${r.id}/menu`} className="text-sm text-blue-600 hover:underline">
+                  Menu
+                </Link>
                 <Link to={`/restaurants/${r.id}/halls`} className="text-sm text-blue-600 hover:underline">
                   Halls
                 </Link>

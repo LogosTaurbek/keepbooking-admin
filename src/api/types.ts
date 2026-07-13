@@ -151,6 +151,30 @@ export interface CreateTableRequest {
 
 export type UpdateTableRequest = Partial<Omit<CreateTableRequest, 'hallId'>> & { status?: TableStatus }
 
+export interface MenuItemDto {
+  id: number
+  restaurantId: number
+  name: string
+  description: string | null
+  price: number
+  category: string | null
+  photoUrl: string | null
+  isAvailable: boolean
+  position: number
+}
+
+export interface CreateMenuItemRequest {
+  restaurantId: number
+  name: string
+  description?: string
+  price: number
+  category?: string
+  photoUrl?: string
+  position?: number
+}
+
+export type UpdateMenuItemRequest = Partial<Omit<CreateMenuItemRequest, 'restaurantId'>> & { isAvailable?: boolean }
+
 // RFC 7807 Problem Details (see backend's ProblemDetail/GlobalExceptionHandler).
 export interface ProblemDetail {
   type: string
