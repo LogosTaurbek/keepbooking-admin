@@ -2,7 +2,7 @@ import { useEffect, useState, type FormEvent } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import * as workingHoursApi from '../api/workingHours'
 import { ApiError } from '../api/client'
-import type { WorkingHoursItemRequest, WorkingHoursOverrideDto } from '../api/types'
+import type { WorkingHoursOverrideDto } from '../api/types'
 
 const DAYS = [1, 2, 3, 4, 5, 6, 7]
 const DAY_LABELS: Record<number, string> = {
@@ -33,7 +33,8 @@ export function RestaurantWorkingHoursPage() {
   const [rows, setRows] = useState<DayRow[] | null>(null)
   const [overrides, setOverrides] = useState<WorkingHoursOverrideDto[] | null>(null)
   const [error, setError] = useState<string | null>(null)
-  const [saving, setSaving] = useState(false)
+  const [savingDay, setSavingDay] = useState<number | null>(null)
+  const [dayErrors, setDayErrors] = useState<Record<number, string>>({})
   const [addingOverride, setAddingOverride] = useState(false)
   const [editingOverrideDate, setEditingOverrideDate] = useState<string | null>(null)
 
@@ -62,24 +63,20 @@ export function RestaurantWorkingHoursPage() {
     setRows((prev) => (prev ? prev.map((r) => (r.dayOfWeek === dayOfWeek ? { ...r, ...patch } : r)) : prev))
   }
 
-  async function handleSaveWeek(e: FormEvent) {
-    e.preventDefault()
-    if (!rows) return
-    setError(null)
-    setSaving(true)
+  async function handleSaveDay(row: DayRow) {
+    setSavingDay(row.dayOfWeek)
+    setDayErrors((prev) => ({ ...prev, [row.dayOfWeek]: '' }))
     try {
-      const items: WorkingHoursItemRequest[] = rows.map((r) => ({
-        dayOfWeek: r.dayOfWeek,
-        isDayOff: r.isDayOff,
-        openTime: r.isDayOff ? null : `${r.openTime}:00`,
-        closeTime: r.isDayOff ? null : `${r.closeTime}:00`,
-      }))
-      await workingHoursApi.replaceWorkingHours(restaurantId, items)
-      load()
+      await workingHoursApi.upsertWorkingHoursDay(restaurantId, row.dayOfWeek, {
+        isDayOff: row.isDayOff,
+        openTime: row.isDayOff ? null : `${row.openTime}:00`,
+        closeTime: row.isDayOff ? null : `${row.closeTime}:00`,
+      })
     } catch (err) {
-      setError(err instanceof ApiError ? (err.problem?.detail ?? 'Failed to save hours') : 'Failed to save hours')
+      const message = err instanceof ApiError ? (err.problem?.detail ?? 'Failed to save') : 'Failed to save'
+      setDayErrors((prev) => ({ ...prev, [row.dayOfWeek]: message }))
     } finally {
-      setSaving(false)
+      setSavingDay(null)
     }
   }
 
@@ -105,46 +102,51 @@ export function RestaurantWorkingHoursPage() {
       {rows === null ? (
         <p className="text-sm text-gray-500">Loading…</p>
       ) : (
-        <form onSubmit={handleSaveWeek} className="mb-8 rounded-lg border border-gray-200 bg-white p-5">
+        <div className="mb-8 rounded-lg border border-gray-200 bg-white p-5">
           <h2 className="mb-3 text-base font-semibold text-gray-900">Weekly schedule</h2>
+          <p className="mb-3 text-xs text-gray-500">Each day saves independently — edit a day and click Save to apply just that day.</p>
           <div className="flex flex-col gap-2">
             {rows.map((row) => (
-              <div key={row.dayOfWeek} className="flex items-center gap-3">
-                <span className="w-24 text-sm text-gray-700">{DAY_LABELS[row.dayOfWeek]}</span>
-                <label className="flex items-center gap-1 text-xs text-gray-700">
+              <div key={row.dayOfWeek} className="flex flex-col gap-1">
+                <div className="flex items-center gap-3">
+                  <span className="w-24 text-sm text-gray-700">{DAY_LABELS[row.dayOfWeek]}</span>
+                  <label className="flex items-center gap-1 text-xs text-gray-700">
+                    <input
+                      type="checkbox"
+                      checked={row.isDayOff}
+                      onChange={(e) => updateRow(row.dayOfWeek, { isDayOff: e.target.checked })}
+                    />
+                    Closed
+                  </label>
                   <input
-                    type="checkbox"
-                    checked={row.isDayOff}
-                    onChange={(e) => updateRow(row.dayOfWeek, { isDayOff: e.target.checked })}
+                    type="time"
+                    disabled={row.isDayOff}
+                    value={row.openTime}
+                    onChange={(e) => updateRow(row.dayOfWeek, { openTime: e.target.value })}
+                    className="rounded-md border border-gray-300 px-2 py-1 text-sm focus:border-blue-500 focus:outline-none disabled:bg-gray-100 disabled:text-gray-400"
                   />
-                  Closed
-                </label>
-                <input
-                  type="time"
-                  disabled={row.isDayOff}
-                  value={row.openTime}
-                  onChange={(e) => updateRow(row.dayOfWeek, { openTime: e.target.value })}
-                  className="rounded-md border border-gray-300 px-2 py-1 text-sm focus:border-blue-500 focus:outline-none disabled:bg-gray-100 disabled:text-gray-400"
-                />
-                <span className="text-sm text-gray-400">–</span>
-                <input
-                  type="time"
-                  disabled={row.isDayOff}
-                  value={row.closeTime}
-                  onChange={(e) => updateRow(row.dayOfWeek, { closeTime: e.target.value })}
-                  className="rounded-md border border-gray-300 px-2 py-1 text-sm focus:border-blue-500 focus:outline-none disabled:bg-gray-100 disabled:text-gray-400"
-                />
+                  <span className="text-sm text-gray-400">–</span>
+                  <input
+                    type="time"
+                    disabled={row.isDayOff}
+                    value={row.closeTime}
+                    onChange={(e) => updateRow(row.dayOfWeek, { closeTime: e.target.value })}
+                    className="rounded-md border border-gray-300 px-2 py-1 text-sm focus:border-blue-500 focus:outline-none disabled:bg-gray-100 disabled:text-gray-400"
+                  />
+                  <button
+                    type="button"
+                    disabled={savingDay === row.dayOfWeek}
+                    onClick={() => handleSaveDay(row)}
+                    className="rounded-md bg-gray-900 px-3 py-1 text-sm text-white hover:bg-gray-800 disabled:opacity-50"
+                  >
+                    {savingDay === row.dayOfWeek ? 'Saving…' : 'Save'}
+                  </button>
+                </div>
+                {dayErrors[row.dayOfWeek] && <p className="pl-24 text-xs text-red-700">{dayErrors[row.dayOfWeek]}</p>}
               </div>
             ))}
           </div>
-          <button
-            type="submit"
-            disabled={saving}
-            className="mt-4 rounded-md bg-gray-900 px-3 py-2 text-sm font-medium text-white hover:bg-gray-800 disabled:opacity-50"
-          >
-            {saving ? 'Saving…' : 'Save week'}
-          </button>
-        </form>
+        </div>
       )}
 
       <div className="rounded-lg border border-gray-200 bg-white p-5">

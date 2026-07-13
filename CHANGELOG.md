@@ -4,6 +4,11 @@
 
 ## [Unreleased] — 2026-07-13
 
+### Changed — Рабочие часы: сохранение по одному дню вместо всей недели
+- Бэкенд перешёл с full-replace `PUT /working-hours` на per-day `PATCH /working-hours/{dayOfWeek}` (подробности и причина — в `CHANGELOG.md` бэкенда за эту же дату). `RestaurantWorkingHoursPage` переделана под это: единой кнопки "Save week" больше нет, у каждой строки дня — своя кнопка "Save", свой индикатор "Saving…" и своя строка ошибки под ней (не общий баннер) — редактирование и сохранение одного дня больше не трогает остальные шесть
+- `api/workingHours.ts`: `replaceWorkingHours(restaurantId, items[])` заменён на `upsertWorkingHoursDay(restaurantId, dayOfWeek, request)`; тип `WorkingHoursItemRequest` заменён на `UpsertWorkingHoursDayRequest` (без `dayOfWeek` в теле, зеркалит новый бэкенд-DTO)
+- Проверено вживую через headless Chrome (Playwright, временно установлен и удалён) на реальном бэкенде: изменили и сохранили только вторник (Tuesday) → перезагрузка страницы → значение вторника персистнуло, остальные дни не пострадали
+
 ### Added — Аналитика ресторана
 - `RestaurantAnalyticsPage` (`/restaurants/:id/analytics`) — карточки с суммарными метриками за выбранный диапазон дат (брони по статусам, confirmation rate, уникальные гости) + топ-5 популярных часов и топ-5 столов в виде горизонтальных барчартов на чистом Tailwind (без графической библиотеки)
 - Диапазон дат по умолчанию — последние 30 дней, есть форма "From/To" + кнопка Apply для произвольного периода (`api/analytics.ts`, зеркалит `RestaurantAnalyticsDto`)

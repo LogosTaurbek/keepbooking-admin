@@ -185,8 +185,7 @@ export interface WorkingHoursDto {
   isDayOff: boolean
 }
 
-export interface WorkingHoursItemRequest {
-  dayOfWeek: number
+export interface UpsertWorkingHoursDayRequest {
   openTime?: string | null
   closeTime?: string | null
   isDayOff?: boolean

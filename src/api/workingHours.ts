@@ -1,8 +1,8 @@
 import { apiFetch } from './client'
 import type {
+  UpsertWorkingHoursDayRequest,
   UpsertWorkingHoursOverrideRequest,
   WorkingHoursDto,
-  WorkingHoursItemRequest,
   WorkingHoursOverrideDto,
 } from './types'
 
@@ -10,8 +10,15 @@ export function getWorkingHours(restaurantId: number): Promise<WorkingHoursDto[]
   return apiFetch<WorkingHoursDto[]>(`/api/v1/restaurants/${restaurantId}/working-hours`)
 }
 
-export function replaceWorkingHours(restaurantId: number, items: WorkingHoursItemRequest[]): Promise<WorkingHoursDto[]> {
-  return apiFetch<WorkingHoursDto[]>(`/api/v1/restaurants/${restaurantId}/working-hours`, { method: 'PUT', body: items })
+export function upsertWorkingHoursDay(
+  restaurantId: number,
+  dayOfWeek: number,
+  request: UpsertWorkingHoursDayRequest,
+): Promise<WorkingHoursDto> {
+  return apiFetch<WorkingHoursDto>(`/api/v1/restaurants/${restaurantId}/working-hours/${dayOfWeek}`, {
+    method: 'PATCH',
+    body: request,
+  })
 }
 
 export function getWorkingHoursOverrides(restaurantId: number): Promise<WorkingHoursOverrideDto[]> {
