@@ -27,6 +27,35 @@ export interface CreateCompanyRequest {
   email?: string
 }
 
+// Scope lives directly on the account: COMPANY_ADMIN manages every restaurant under companyId
+// (restaurantId null); RESTAURANT_ADMIN manages only the one matching restaurantId.
+export type UserRole = 'ROLE_USER' | 'ROLE_RESTAURANT_ADMIN' | 'ROLE_COMPANY_ADMIN' | 'ROLE_SUPER_ADMIN'
+
+export interface UserProfileDto {
+  id: number
+  firstname: string
+  lastname: string
+  phone: string | null
+  email: string
+  avatarUrl: string | null
+  language: string
+  timezone: string
+  status: 'ACTIVE' | 'BLOCKED' | 'DELETED'
+  emailVerified: boolean
+  role: UserRole
+  companyId: number | null
+  restaurantId: number | null
+  cityId: number | null
+  cityName: string | null
+  countryId: number | null
+  countryName: string | null
+  createdAt: string
+}
+
+export interface AssignAdminRequest {
+  email: string
+}
+
 export interface RestaurantDto {
   id: number
   companyId: number

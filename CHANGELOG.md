@@ -2,6 +2,20 @@
 
 Формат по мотивам [Keep a Changelog](https://keepachangelog.com/ru/1.1.0/). Версий/тегов пока нет — записи сгруппированы по дате.
 
+## [Unreleased] — 2026-07-15
+
+### Added — Онбординг компаний (SUPER_ADMIN) и управление командой ресторана
+Фронтенд для новой ролевой модели бэкенда (см. `CHANGELOG.md` бэкенда за эту же дату — `role`/`companyId`/`restaurantId` вместо `Company.owner`).
+
+- `AuthContext` расширен: после логина подтягивает `GET /users/me` и хранит `profile` (role/companyId/restaurantId) в контексте — `useAuth()` теперь отдаёт не только `isAuthenticated`, но и профиль для управления видимостью UI по роли
+- `SuperAdminCompaniesPage` (`/admin/companies`) — список всех компаний, форма создания новой (от лица клиента), на каждую компанию — разворачиваемый блок с текущими company-admin'ами и формой «привязать по email»
+- `RestaurantTeamPage` (`/restaurants/:id/team`) — для company-admin: список restaurant-admin'ов конкретного ресторана, назначение по email, отзыв
+- `RestaurantsListPage` теперь реагирует на роль: `ROLE_SUPER_ADMIN` сразу редиректится на `/admin/companies` (у них нет своего company/restaurant — старый экран "создайте компанию" не имел смысла для них); кнопка "New restaurant" видна только `ROLE_COMPANY_ADMIN` (restaurant-admin не может создавать новые рестораны — это company-level действие на бэкенде); ссылка "Team" на каждой строке видна только `ROLE_COMPANY_ADMIN`
+- `Layout` — пункт меню "Companies" в хедере появляется только для `ROLE_SUPER_ADMIN`
+- Список ресторанов (`getMyRestaurants`) теперь естественным образом отражает scope с бэкенда без доп. логики на фронте: restaurant-admin увидит только один свой ресторан, company-admin — все рестораны компании
+- Проверено вживую через headless Chrome (Playwright, временно установлен и удалён) полным сценарием в реальном UI, все три уровня ролей: SUPER_ADMIN логинится → редирект на `/admin/companies` → создаёт компанию через форму → привязывает admin'а по email через форму → company-admin логинится → видит все 3 ресторана и кнопку "New restaurant" → назначает restaurant-admin'а на один ресторан через страницу Team → restaurant-admin логинится → видит **только** свой ресторан, без "New restaurant" и без "Team" → успешно открывает меню своего ресторана
+- По пути обнаружено (не баг фронтенда): тестовый скрипт один раз упал на пере-использованном email — второй прогон с тем же email после первой частично-успешной попытки корректно получил `VALIDATION_ERROR` "user already belongs to a different company" от бэкенда, что и является правильным поведением, просто тестовые данные были загрязнены предыдущим прогоном
+
 ## [Unreleased] — 2026-07-14
 
 ### Added — Фото ресторана

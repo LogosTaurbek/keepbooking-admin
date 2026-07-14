@@ -1,9 +1,10 @@
 import { useEffect, useState, type FormEvent } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, Navigate } from 'react-router-dom'
 import * as companiesApi from '../api/companies'
 import * as restaurantsApi from '../api/restaurants'
 import type { CompanyDto, RestaurantDto } from '../api/types'
 import { ApiError } from '../api/client'
+import { useAuth } from '../auth/useAuth'
 
 const STATUS_STYLES: Record<RestaurantDto['status'], string> = {
   DRAFT: 'bg-gray-100 text-gray-700',
@@ -14,18 +15,25 @@ const STATUS_STYLES: Record<RestaurantDto['status'], string> = {
 }
 
 export function RestaurantsListPage() {
+  const { profile } = useAuth()
   const [companies, setCompanies] = useState<CompanyDto[] | null>(null)
   const [restaurants, setRestaurants] = useState<RestaurantDto[] | null>(null)
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
+    if (profile?.role === 'ROLE_SUPER_ADMIN') return
     Promise.all([companiesApi.getMyCompanies(), restaurantsApi.getMyRestaurants()])
       .then(([c, r]) => {
         setCompanies(c)
         setRestaurants(r)
       })
       .catch((err) => setError(err instanceof ApiError ? (err.problem?.detail ?? 'Failed to load') : 'Failed to load'))
-  }, [])
+  }, [profile])
+
+  // SUPER_ADMIN has no company/restaurant of their own - their home is the onboarding console.
+  if (profile?.role === 'ROLE_SUPER_ADMIN') {
+    return <Navigate to="/admin/companies" replace />
+  }
 
   if (error) return <p className="text-sm text-red-600">{error}</p>
   if (companies === null || restaurants === null) return <p className="text-sm text-gray-500">Loading…</p>
@@ -39,12 +47,14 @@ export function RestaurantsListPage() {
     <div>
       <div className="mb-6 flex items-center justify-between">
         <h1 className="text-xl font-semibold text-gray-900">Restaurants</h1>
-        <Link
-          to="/restaurants/new"
-          className="rounded-md bg-gray-900 px-3 py-2 text-sm font-medium text-white hover:bg-gray-800"
-        >
-          New restaurant
-        </Link>
+        {profile?.role === 'ROLE_COMPANY_ADMIN' && (
+          <Link
+            to="/restaurants/new"
+            className="rounded-md bg-gray-900 px-3 py-2 text-sm font-medium text-white hover:bg-gray-800"
+          >
+            New restaurant
+          </Link>
+        )}
       </div>
 
       {restaurants.length === 0 ? (
@@ -82,6 +92,11 @@ export function RestaurantsListPage() {
                 <Link to={`/restaurants/${r.id}/reviews`} className="text-sm text-blue-600 hover:underline">
                   Reviews
                 </Link>
+                {profile?.role === 'ROLE_COMPANY_ADMIN' && (
+                  <Link to={`/restaurants/${r.id}/team`} className="text-sm text-blue-600 hover:underline">
+                    Team
+                  </Link>
+                )}
               </div>
             </li>
           ))}

@@ -11,7 +11,9 @@ import { RestaurantMenuPage } from './pages/RestaurantMenuPage'
 import { RestaurantPhotosPage } from './pages/RestaurantPhotosPage'
 import { RestaurantReviewsPage } from './pages/RestaurantReviewsPage'
 import { RestaurantsListPage } from './pages/RestaurantsListPage'
+import { RestaurantTeamPage } from './pages/RestaurantTeamPage'
 import { RestaurantWorkingHoursPage } from './pages/RestaurantWorkingHoursPage'
+import { SuperAdminCompaniesPage } from './pages/SuperAdminCompaniesPage'
 
 export default function App() {
   return (
@@ -31,6 +33,8 @@ export default function App() {
             <Route path="/restaurants/:id/analytics" element={<RestaurantAnalyticsPage />} />
             <Route path="/restaurants/:id/reviews" element={<RestaurantReviewsPage />} />
             <Route path="/restaurants/:id/photos" element={<RestaurantPhotosPage />} />
+            <Route path="/restaurants/:id/team" element={<RestaurantTeamPage />} />
+            <Route path="/admin/companies" element={<SuperAdminCompaniesPage />} />
           </Route>
         </Route>
 
