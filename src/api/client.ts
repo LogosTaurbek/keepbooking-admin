@@ -80,7 +80,9 @@ export async function apiFetch<T>(path: string, options: RequestOptions = {}): P
   const { method = 'GET', body, auth = true } = options
 
   const doFetch = async (): Promise<Response> => {
-    const headers: Record<string, string> = { 'Content-Type': 'application/json' }
+    const isFormData = body instanceof FormData
+    // For FormData, let the browser set Content-Type itself (it needs to add the multipart boundary).
+    const headers: Record<string, string> = isFormData ? {} : { 'Content-Type': 'application/json' }
     if (auth) {
       const token = getAccessToken()
       if (token) headers.Authorization = `Bearer ${token}`
@@ -88,7 +90,7 @@ export async function apiFetch<T>(path: string, options: RequestOptions = {}): P
     return fetch(`${BASE_URL}${path}`, {
       method,
       headers,
-      body: body !== undefined ? JSON.stringify(body) : undefined,
+      body: body === undefined ? undefined : isFormData ? body : JSON.stringify(body),
     })
   }
 

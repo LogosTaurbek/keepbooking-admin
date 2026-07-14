@@ -8,6 +8,7 @@ import { RestaurantBookingsPage } from './pages/RestaurantBookingsPage'
 import { RestaurantFormPage } from './pages/RestaurantFormPage'
 import { RestaurantHallsPage } from './pages/RestaurantHallsPage'
 import { RestaurantMenuPage } from './pages/RestaurantMenuPage'
+import { RestaurantPhotosPage } from './pages/RestaurantPhotosPage'
 import { RestaurantReviewsPage } from './pages/RestaurantReviewsPage'
 import { RestaurantsListPage } from './pages/RestaurantsListPage'
 import { RestaurantWorkingHoursPage } from './pages/RestaurantWorkingHoursPage'
@@ -29,6 +30,7 @@ export default function App() {
             <Route path="/restaurants/:id/hours" element={<RestaurantWorkingHoursPage />} />
             <Route path="/restaurants/:id/analytics" element={<RestaurantAnalyticsPage />} />
             <Route path="/restaurants/:id/reviews" element={<RestaurantReviewsPage />} />
+            <Route path="/restaurants/:id/photos" element={<RestaurantPhotosPage />} />
           </Route>
         </Route>
 

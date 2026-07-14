@@ -253,6 +253,13 @@ export interface ReplyToReviewRequest {
   reply: string
 }
 
+export interface RestaurantPhotoDto {
+  id: number
+  restaurantId: number
+  url: string
+  position: number
+}
+
 // RFC 7807 Problem Details (see backend's ProblemDetail/GlobalExceptionHandler).
 export interface ProblemDetail {
   type: string
