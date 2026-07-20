@@ -71,6 +71,7 @@ export interface RestaurantDto {
   reviewsCount: number
   avgCheck: number | null
   status: 'DRAFT' | 'PENDING_MODERATION' | 'ACTIVE' | 'HIDDEN' | 'BLOCKED'
+  rejectionReason: string | null
   cuisineSlugs: string[]
 }
 
@@ -88,6 +89,10 @@ export interface CreateRestaurantRequest {
 }
 
 export type UpdateRestaurantRequest = Partial<Omit<CreateRestaurantRequest, 'companyId'>>
+
+export interface RejectRestaurantRequest {
+  reason: string
+}
 
 export type BookingStatus = 'PENDING' | 'CONFIRMED' | 'REJECTED' | 'CANCELLED' | 'COMPLETED' | 'NO_SHOW'
 

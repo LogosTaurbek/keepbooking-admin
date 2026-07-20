@@ -14,6 +14,7 @@ import { RestaurantsListPage } from './pages/RestaurantsListPage'
 import { RestaurantTeamPage } from './pages/RestaurantTeamPage'
 import { RestaurantWorkingHoursPage } from './pages/RestaurantWorkingHoursPage'
 import { SuperAdminCompaniesPage } from './pages/SuperAdminCompaniesPage'
+import { SuperAdminRestaurantsPage } from './pages/SuperAdminRestaurantsPage'
 
 export default function App() {
   return (
@@ -35,6 +36,7 @@ export default function App() {
             <Route path="/restaurants/:id/photos" element={<RestaurantPhotosPage />} />
             <Route path="/restaurants/:id/team" element={<RestaurantTeamPage />} />
             <Route path="/admin/companies" element={<SuperAdminCompaniesPage />} />
+            <Route path="/admin/restaurants" element={<SuperAdminRestaurantsPage />} />
           </Route>
         </Route>
 

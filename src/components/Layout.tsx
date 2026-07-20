@@ -19,9 +19,14 @@ export function Layout() {
               KeepBooking Admin
             </Link>
             {profile?.role === 'ROLE_SUPER_ADMIN' && (
-              <Link to="/admin/companies" className="text-sm text-gray-600 hover:text-gray-900">
-                Companies
-              </Link>
+              <>
+                <Link to="/admin/companies" className="text-sm text-gray-600 hover:text-gray-900">
+                  Companies
+                </Link>
+                <Link to="/admin/restaurants" className="text-sm text-gray-600 hover:text-gray-900">
+                  Restaurant moderation
+                </Link>
+              </>
             )}
           </div>
           <button
